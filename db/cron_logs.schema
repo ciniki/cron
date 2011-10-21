@@ -1,0 +1,24 @@
+#
+# Description
+# -----------
+# The cron log table stores the results of each execution of the cron job.  
+# This table can be used to extract tracking, and double check each execution is working.
+# It will need to be purged in the future.
+#
+# Fields
+# ------
+# id:					The id for this instance the cron job executed
+# cron_id:				The id of the cron that was executed
+# status:				The status code of the called method (ok, fail)
+# result:				The PHP Serialized result hash.
+# date_added:			The date the log entry was recorded in the database.
+#						
+create table cron_logs (
+	id bigint not null auto_increment,
+	cron_id int not null,
+	status varchar(10) not null,
+	result varchar(10000) not null,
+	date_added datetime not null,
+	primary key (id),
+	index (cron_id)
+) ENGINE='InnoDB', COMMENT='v1.01';

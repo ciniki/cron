@@ -1,0 +1,10 @@
+The cron module is designed to operate much list cron on unix.  Not all combinations
+of times are available, they will be added as required.
+
+Each cron job contains a next scheduled time, which is updated upon a successful completion.
+
+The cron process acts much list rest.php or json.php in that it contains a starting point for 
+database access, and separates cron specific methods from other public or private methods.  All
+cron methods must be located in a module, under the cron subdirectory.  This ensures that all
+cron functions are specifically written, and not just any public method can be used for cron.
+
