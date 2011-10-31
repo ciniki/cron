@@ -16,9 +16,9 @@ $ciniki_root = dirname(__FILE__);
 if( !file_exists($ciniki_root . '/ciniki-api.ini') ) {
 	$ciniki_root = dirname(dirname(dirname(dirname(__FILE__))));
 }
-require_once($ciniki_root . '/ciniki-modules/core/private/init.php');
-require_once($ciniki_root . '/ciniki-modules/cron/private/execCronMethod.php');
-require_once($ciniki_root . '/ciniki-modules/cron/private/getExecutionList.php');
+require_once($ciniki_root . '/ciniki-api/core/private/init.php');
+require_once($ciniki_root . '/ciniki-api/cron/private/execCronMethod.php');
+require_once($ciniki_root . '/ciniki-api/cron/private/getExecutionList.php');
 
 $rc = ciniki_core_init($ciniki_root, 'rest');
 if( $rc['stat'] != 'ok' ) {
