@@ -26,7 +26,7 @@ function ciniki_cron_getExecutionList($ciniki) {
 	// to the last and not interfere with new scheduled cron jobs
 	//
 	$strsql = "SELECT id, business_id, h, m, dom, mon, dow, method, serialized_args "
-		. "FROM cron "
+		. "FROM ciniki_cron "
 		. "WHERE status = 1 "
 		. "AND next_exec < UTC_TIMESTAMP() "
 		. "ORDER BY next_exec ASC "

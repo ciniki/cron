@@ -13,7 +13,7 @@
 # result:				The PHP Serialized result hash.
 # date_added:			The date the log entry was recorded in the database.
 #						
-create table cron_logs (
+create table ciniki_cron_logs (
 	id bigint not null auto_increment,
 	cron_id int not null,
 	status varchar(10) not null,

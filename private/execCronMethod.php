@@ -13,7 +13,7 @@
 // Arguments
 // ---------
 // api_key:		The key assigned to the client application.  This
-//				will be verified in the core_api_keys module
+//				will be verified in the ciniki_core_api_keys module
 //
 // auth_token:	The auth_token is assigned after authentication.  If
 //				auth_token is blank, then only certain method calls are allowed.
@@ -26,14 +26,37 @@
 //
 function ciniki_cron_execCronMethod($ciniki, $cronjob) {
 
+	list($package, $module, $function) = split('/\./', $cronjob['method']);
+
 	//
 	// Check the business_id has the cron module enabled
 	//
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbQuote.php');
-	$strsql = "SELECT businesses.id FROM businesses "
-		. "WHERE businesses.id = '" . ciniki_core_dbQuote($ciniki, $cronjob['business_id']) . "' "
-		. "AND businesses.status = 1 "
-		. "AND (businesses.modules & 0x1000000) = 0x1000000 "
+	$strsql = "SELECT ciniki_businesses.id FROM ciniki_businesses, ciniki_business_modules "
+		. "WHERE ciniki_businesses.id = '" . ciniki_core_dbQuote($ciniki, $cronjob['business_id']) . "' "
+		. "AND ciniki_businesses.status = 1 "
+		. "AND ciniki_businesses.id = ciniki_business_modules.business_id "
+		. "AND ciniki_business_modules.package = 'ciniki' "
+		. "AND ciniki_business_modules.module = 'cron' "
+		. "";
+	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbHashQuery.php');
+	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'businesses', 'business');
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+	if( !isset($rc['business']) || !isset($rc['business']['id']) || $rc['business']['id'] != $cronjob['business_id'] ) {
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'444', 'msg'=>'Unable to validate business'));
+	}
+
+	//
+	// Check the module requested is enabled
+	//
+	$strsql = "SELECT ciniki_businesses.id FROM ciniki_businesses, ciniki_business_modules "
+		. "WHERE ciniki_businesses.id = '" . ciniki_core_dbQuote($ciniki, $cronjob['business_id']) . "' "
+		. "AND ciniki_businesses.status = 1 "
+		. "AND ciniki_businesses.id = ciniki_business_modules.business_id "
+		. "AND ciniki_business_modules.package = '" . ciniki_core_dbQuote($ciniki, $package) . "' "
+		. "AND ciniki_business_modules.module = '" . ciniki_core_dbQuote($ciniki, $module) . "' "
 		. "";
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbHashQuery.php');
 	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'businesses', 'business');
@@ -59,7 +82,7 @@ function ciniki_cron_execCronMethod($ciniki, $cronjob) {
 	// Update the status to running, if not already
 	// Verify the next_exec is still < UTC_TIMESTAMP (locking check)
 	//
-	$strsql = "UPDATE cron "
+	$strsql = "UPDATE ciniki_cron "
 		. "SET status = 2 "
 		. "WHERE id = '" . ciniki_core_dbQuote($ciniki, $cronjob['id']) . "' "
 		. "AND status = 1 "
@@ -79,9 +102,7 @@ function ciniki_cron_execCronMethod($ciniki, $cronjob) {
 	//
 	// Parse the method, and the function name
 	//
-	$method_filename = $ciniki['config']['core']['modules_dir'] . '/' 
-		. preg_replace('/ciniki\.(.*)\./', '\1/cron/', $cronjob['method']) . '.php';
-
+	$method_filename = $ciniki['config']['core']['root_dir'] . "/$package-api/$module/cron/$function.php";
 	$method_function = preg_replace('/\./', '_', $cronjob['method']);
 
 	//
@@ -110,9 +131,9 @@ function ciniki_cron_execCronMethod($ciniki, $cronjob) {
 	$method_rc = $method_function($ciniki, $cronjob);
 
 	//
-	// Save the result in the cron_logs table
+	// Save the result in the ciniki_cron_logs table
 	//
-	$strsql = "INSERT INTO cron_logs (cron_id, status, result, date_added) "
+	$strsql = "INSERT INTO ciniki_cron_logs (cron_id, status, result, date_added) "
 		. "VALUES ('" . ciniki_core_dbQuote($ciniki, $cronjob['id']) . "' "
 		. ", '" . ciniki_core_dbQuote($ciniki, $method_rc['stat']) . "' "
 		. ", '" . ciniki_core_dbQuote($ciniki, serialize($method_rc)) . "' "
@@ -142,7 +163,7 @@ function ciniki_cron_execCronMethod($ciniki, $cronjob) {
 	//
 	// Unlock and schedule the next transaction
 	//
-	$strsql = "UPDATE cron "
+	$strsql = "UPDATE ciniki_cron "
 		. "SET status = 1 "
 		. ", last_status = '" . ciniki_core_dbQuote($ciniki, $method_rc['stat']) . "' "
 		. ", last_exec = UTC_TIMESTAMP() "
