@@ -38,6 +38,7 @@ function ciniki_cron_execCronMethod($ciniki, $cronjob) {
 		. "AND ciniki_businesses.id = ciniki_business_modules.business_id "
 		. "AND ciniki_business_modules.package = 'ciniki' "
 		. "AND ciniki_business_modules.module = 'cron' "
+		. "AND ciniki_business_modules.status = 1 "
 		. "";
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbHashQuery.php');
 	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'businesses', 'business');
@@ -57,6 +58,7 @@ function ciniki_cron_execCronMethod($ciniki, $cronjob) {
 		. "AND ciniki_businesses.id = ciniki_business_modules.business_id "
 		. "AND ciniki_business_modules.package = '" . ciniki_core_dbQuote($ciniki, $package) . "' "
 		. "AND ciniki_business_modules.module = '" . ciniki_core_dbQuote($ciniki, $module) . "' "
+		. "AND ciniki_business_modules.status = 1 "
 		. "";
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbHashQuery.php');
 	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'businesses', 'business');
@@ -64,7 +66,7 @@ function ciniki_cron_execCronMethod($ciniki, $cronjob) {
 		return $rc;
 	}
 	if( !isset($rc['business']) || !isset($rc['business']['id']) || $rc['business']['id'] != $cronjob['business_id'] ) {
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'444', 'msg'=>'Unable to validate business'));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'442', 'msg'=>'Unable to validate business'));
 	}
 
 	//
