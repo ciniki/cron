@@ -26,7 +26,7 @@
 //
 function ciniki_cron_execCronMethod($ciniki, $cronjob) {
 
-	list($package, $module, $function) = split('/\./', $cronjob['method']);
+	list($package, $module, $function) = preg_split('/\./', $cronjob['method']);
 
 	//
 	// Check the business_id has the cron module enabled
