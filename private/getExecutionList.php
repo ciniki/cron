@@ -32,7 +32,7 @@ function ciniki_cron_getExecutionList($ciniki) {
 		. "ORDER BY next_exec ASC "
 		. "";
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
-	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'cron', 'cronjobs', 'cronjob', array('stat'=>'ok'));
+	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.cron', 'cronjobs', 'cronjob', array('stat'=>'ok'));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}
