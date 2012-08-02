@@ -12,17 +12,6 @@
 //
 // Arguments
 // ---------
-// api_key:		The key assigned to the client application.  This
-//				will be verified in the ciniki_core_api_keys module
-//
-// auth_token:	The auth_token is assigned after authentication.  If
-//				auth_token is blank, then only certain method calls are allowed.
-//
-// method:		The method to call.  This is a decimal notated
-//
-// format:		What is the requested format of the response.  This can be
-//				xml, html, tmpl or hash.  If the request would like json, 
-//				xml-rpc, rest or php_serial, then the format
 //
 function ciniki_cron_execCronMethod($ciniki, $cronjob) {
 
