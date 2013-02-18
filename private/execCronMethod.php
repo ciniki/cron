@@ -20,7 +20,7 @@ function ciniki_cron_execCronMethod($ciniki, $cronjob) {
 	//
 	// Check the business_id has the cron module enabled
 	//
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbQuote.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
 	$strsql = "SELECT ciniki_businesses.id FROM ciniki_businesses, ciniki_business_modules "
 		. "WHERE ciniki_businesses.id = '" . ciniki_core_dbQuote($ciniki, $cronjob['business_id']) . "' "
 		. "AND ciniki_businesses.status = 1 "
@@ -29,7 +29,7 @@ function ciniki_cron_execCronMethod($ciniki, $cronjob) {
 		. "AND ciniki_business_modules.module = 'cron' "
 		. "AND ciniki_business_modules.status = 1 "
 		. "";
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbHashQuery.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
 	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.businesses', 'business');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
@@ -49,7 +49,7 @@ function ciniki_cron_execCronMethod($ciniki, $cronjob) {
 		. "AND ciniki_business_modules.module = '" . ciniki_core_dbQuote($ciniki, $module) . "' "
 		. "AND ciniki_business_modules.status = 1 "
 		. "";
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbHashQuery.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
 	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.businesses', 'business');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
@@ -61,9 +61,9 @@ function ciniki_cron_execCronMethod($ciniki, $cronjob) {
 	//
 	// Start a transaction
 	//
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbTransactionStart.php');
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbTransactionRollback.php');
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbTransactionCommit.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionStart');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionRollback');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionCommit');
 	$rc = ciniki_core_dbTransactionStart($ciniki, 'ciniki.cron');
 	if( $rc['stat'] != 'ok' ) { 
 		return $rc;
@@ -79,7 +79,7 @@ function ciniki_cron_execCronMethod($ciniki, $cronjob) {
 		. "AND status = 1 "
 		. "AND next_exec < UTC_TIMESTAMP() "
 		. "";
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbUpdate.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbUpdate');
 	$rc = ciniki_core_dbUpdate($ciniki, $strsql, 'ciniki.cron');
 	if( $rc['stat'] != 'ok' ) {
 		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.cron');
@@ -129,7 +129,7 @@ function ciniki_cron_execCronMethod($ciniki, $cronjob) {
 		. ", '" . ciniki_core_dbQuote($ciniki, $method_rc['stat']) . "' "
 		. ", '" . ciniki_core_dbQuote($ciniki, serialize($method_rc)) . "' "
 		. ", UTC_TIMESTAMP()) ";
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbInsert.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbInsert');
 	$rc = ciniki_core_dbInsert($ciniki, $strsql, 'ciniki.cron');
 	if( $rc['stat'] != 'ok' ) {
 		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.cron');
@@ -139,7 +139,7 @@ function ciniki_cron_execCronMethod($ciniki, $cronjob) {
 	//
 	// Calculate the next scheduled cron for this job
 	//
-	require_once($ciniki['config']['core']['modules_dir'] . '/cron/private/calcNextExec.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'cron', 'private', 'calcNextExec');
 	$rc = ciniki_cron_calcNextExec($ciniki, $cronjob['h'], $cronjob['m'], $cronjob['dom'], $cronjob['mon'], $cronjob['dow']);
 	if( $rc['stat'] != 'ok' ) {
 		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.cron');

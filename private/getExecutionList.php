@@ -31,7 +31,7 @@ function ciniki_cron_getExecutionList($ciniki) {
 		. "AND next_exec < UTC_TIMESTAMP() "
 		. "ORDER BY next_exec ASC "
 		. "";
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbRspQuery');
 	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.cron', 'cronjobs', 'cronjob', array('stat'=>'ok'));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
