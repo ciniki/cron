@@ -42,14 +42,24 @@ if( $rc['stat'] != 'ok' ) {
 	exit(1);
 }
 
-if( !isset($rc['cronjobs']) ) {
-	exit(0);
+if( isset($rc['cronjobs']) ) {
+	foreach($rc['cronjobs'] as $cid) {
+		$rc = ciniki_cron_execCronMethod($ciniki, $cid['cronjob']);
+		if( $rc['stat'] != 'ok' ) {
+			print "CRON: " . $cid['cronjob']['id'] . " failed - #" . $rc['err']['code'] . ": " . $rc['err']['msg'] . "\n";
+		}
+	}
 }
 
-foreach($rc['cronjobs'] as $cid) {
-	$rc = ciniki_cron_execCronMethod($ciniki, $cid['cronjob']);
+//
+// Check for updateFeeds file to update ciniki.newsaggregator feeds
+//
+if( file_exists($ciniki_root . '/ciniki-api/newsaggregator/cron/updateFeeds.php') ) {
+	print "CRON: Updating feeds\n";
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'newsaggregator', 'cron', 'updateFeeds');
+	$rc = ciniki_newsaggregator_updateFeeds($ciniki);
 	if( $rc['stat'] != 'ok' ) {
-		print "Cronjob " . $cid['cronjob']['id'] . " failed - #" . $rc['err']['code'] . ": " . $rc['err']['msg'] . "\n";
+		print "CRON: ciniki.newsaggregator.updateFeeds failed (" . serialize($rc['err']) . ")\n";
 	}
 }
 
