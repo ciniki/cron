@@ -46,8 +46,19 @@ if( isset($rc['cronjobs']) ) {
 	foreach($rc['cronjobs'] as $cid) {
 		$rc = ciniki_cron_execCronMethod($ciniki, $cid['cronjob']);
 		if( $rc['stat'] != 'ok' ) {
-			print "CRON: " . $cid['cronjob']['id'] . " failed - #" . $rc['err']['code'] . ": " . $rc['err']['msg'] . "\n";
+			print "CRON-ERR: " . $cid['cronjob']['id'] . " failed - #" . $rc['err']['code'] . ": " . $rc['err']['msg'] . "\n";
 		}
+	}
+}
+
+//
+// Check for mail to be sent
+//
+if( file_exists($ciniki_root . '/ciniki-api/mail/cron/checkMail.php') ) {
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'mail', 'cron', 'checkMail');
+	$rc = ciniki_mail_checkMail($ciniki);
+	if( $rc['stat'] != 'ok' ) {
+		print "CRON-ERR: ciniki.mail.checkMail failed (" . serialize($rc['err']) . ")\n";
 	}
 }
 
@@ -59,7 +70,7 @@ if( file_exists($ciniki_root . '/ciniki-api/newsaggregator/cron/updateFeeds.php'
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'newsaggregator', 'cron', 'updateFeeds');
 	$rc = ciniki_newsaggregator_updateFeeds($ciniki);
 	if( $rc['stat'] != 'ok' ) {
-		print "CRON: ciniki.newsaggregator.updateFeeds failed (" . serialize($rc['err']) . ")\n";
+		print "CRON-ERR: ciniki.newsaggregator.updateFeeds failed (" . serialize($rc['err']) . ")\n";
 	}
 }
 
