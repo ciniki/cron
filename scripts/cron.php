@@ -56,7 +56,7 @@ if( isset($rc['cronjobs']) ) {
 //
 if( file_exists($ciniki_root . '/ciniki-api/mail/cron/checkMail.php') ) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'mail', 'cron', 'checkMail');
-	$rc = ciniki_mail_checkMail($ciniki);
+	$rc = ciniki_mail_cron_checkMail($ciniki);
 	if( $rc['stat'] != 'ok' ) {
 		print "CRON-ERR: ciniki.mail.checkMail failed (" . serialize($rc['err']) . ")\n";
 	}
