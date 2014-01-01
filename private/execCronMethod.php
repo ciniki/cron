@@ -93,7 +93,7 @@ function ciniki_cron_execCronMethod($ciniki, $cronjob) {
 	//
 	// Parse the method, and the function name
 	//
-	$method_filename = $ciniki['config']['core']['root_dir'] . "/$package-api/$module/cron/$function.php";
+	$method_filename = $ciniki['config']['core']['root_dir'] . "/$package-mods/$module/cron/$function.php";
 	$method_function = preg_replace('/\./', '_', $cronjob['method']);
 
 	//
