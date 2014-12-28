@@ -68,9 +68,21 @@ if( file_exists($ciniki_root . '/ciniki-mods/mail/cron/checkMail.php') ) {
 if( file_exists($ciniki_root . '/ciniki-mods/newsaggregator/cron/updateFeeds.php') ) {
 	print "CRON: Updating feeds\n";
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'newsaggregator', 'cron', 'updateFeeds');
-	$rc = ciniki_newsaggregator_updateFeeds($ciniki);
+	$rc = ciniki_newsaggregator_cron_updateFeeds($ciniki);
 	if( $rc['stat'] != 'ok' ) {
 		print "CRON-ERR: ciniki.newsaggregator.updateFeeds failed (" . serialize($rc['err']) . ")\n";
+	}
+}
+
+//
+// Check for recurring invoices that need to be added
+//
+if( file_exists($ciniki_root . '/ciniki-mods/sapos/cron/addRecurring.php') ) {
+	print "CRON: Adding recurring invoices\n";
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'sapos', 'cron', 'addRecurring');
+	$rc = ciniki_sapos_cron_addRecurring($ciniki);
+	if( $rc['stat'] != 'ok' ) {
+		print "CRON-ERR: ciniki.sapos.addRecurring failed (" . serialize($rc['err']) . ")\n";
 	}
 }
 
