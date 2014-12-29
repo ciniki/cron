@@ -32,6 +32,7 @@ if( $rc['stat'] != 'ok' ) {
 // Setup the $ciniki variable to hold all things ciniki.  
 //
 $ciniki = $rc['ciniki'];
+$ciniki['session']['user']['id'] = -3;	// Setup to Ciniki Robot
 
 //
 // Get list of cron jobs
@@ -58,7 +59,7 @@ if( file_exists($ciniki_root . '/ciniki-mods/mail/cron/checkMail.php') ) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'mail', 'cron', 'checkMail');
 	$rc = ciniki_mail_cron_checkMail($ciniki);
 	if( $rc['stat'] != 'ok' ) {
-		print "CRON-ERR: ciniki.mail.checkMail failed (" . serialize($rc['err']) . ")\n";
+		error_log("CRON-ERR: ciniki.mail.checkMail failed (" . serialize($rc['err']) . ")");
 	}
 }
 
@@ -70,7 +71,7 @@ if( file_exists($ciniki_root . '/ciniki-mods/newsaggregator/cron/updateFeeds.php
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'newsaggregator', 'cron', 'updateFeeds');
 	$rc = ciniki_newsaggregator_cron_updateFeeds($ciniki);
 	if( $rc['stat'] != 'ok' ) {
-		print "CRON-ERR: ciniki.newsaggregator.updateFeeds failed (" . serialize($rc['err']) . ")\n";
+		error_log("CRON-ERR: ciniki.newsaggregator.updateFeeds failed (" . serialize($rc['err']) . ")");
 	}
 }
 
@@ -82,7 +83,7 @@ if( file_exists($ciniki_root . '/ciniki-mods/sapos/cron/addRecurring.php') ) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'sapos', 'cron', 'addRecurring');
 	$rc = ciniki_sapos_cron_addRecurring($ciniki);
 	if( $rc['stat'] != 'ok' ) {
-		print "CRON-ERR: ciniki.sapos.addRecurring failed (" . serialize($rc['err']) . ")\n";
+		error_log("CRON-ERR: ciniki.sapos.addRecurring failed (" . serialize($rc['err']) . ")");
 	}
 }
 
