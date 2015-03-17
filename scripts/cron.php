@@ -87,5 +87,17 @@ if( file_exists($ciniki_root . '/ciniki-mods/sapos/cron/addRecurring.php') ) {
 	}
 }
 
+//
+// Check for directory updates from dropbox
+//
+if( file_exists($ciniki_root . '/ciniki-mods/directory/cron/dropboxUpdate.php') ) {
+	print "CRON: Updating directories from Dropbox\n";
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'directory', 'cron', 'dropboxUpdate');
+	$rc = ciniki_directory_cron_dropboxUpdate($ciniki);
+	if( $rc['stat'] != 'ok' ) {
+		error_log("CRON-ERR: ciniki.directory.dropboxUpdate failed (" . serialize($rc['err']) . ")");
+	}
+}
+
 exit(0);
 ?>
