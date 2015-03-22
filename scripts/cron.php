@@ -66,6 +66,7 @@ if( file_exists($ciniki_root . '/ciniki-mods/mail/cron/checkMail.php') ) {
 //
 // Check for updateFeeds file to update ciniki.newsaggregator feeds
 //
+/*
 if( file_exists($ciniki_root . '/ciniki-mods/newsaggregator/cron/updateFeeds.php') ) {
 	print "CRON: Updating feeds\n";
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'newsaggregator', 'cron', 'updateFeeds');
@@ -74,6 +75,7 @@ if( file_exists($ciniki_root . '/ciniki-mods/newsaggregator/cron/updateFeeds.php
 		error_log("CRON-ERR: ciniki.newsaggregator.updateFeeds failed (" . serialize($rc['err']) . ")");
 	}
 }
+*/
 
 //
 // Check for recurring invoices that need to be added
