@@ -53,6 +53,17 @@ if( isset($rc['cronjobs']) ) {
 }
 
 //
+// Check for campaign mail that is queued
+//
+if( file_exists($ciniki_root . '/ciniki-mods/campaigns/cron/checkMail.php') ) {
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'campaigns', 'cron', 'checkQueue');
+	$rc = ciniki_campaigns_cron_checkQueue($ciniki);
+	if( $rc['stat'] != 'ok' ) {
+		error_log("CRON-ERR: ciniki.mail.checkQueue failed (" . serialize($rc['err']) . ")");
+	}
+}
+
+//
 // Check for mail to be sent
 //
 if( file_exists($ciniki_root . '/ciniki-mods/mail/cron/checkMail.php') ) {
