@@ -59,7 +59,18 @@ if( file_exists($ciniki_root . '/ciniki-mods/campaigns/cron/checkQueue.php') ) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'campaigns', 'cron', 'checkQueue');
 	$rc = ciniki_campaigns_cron_checkQueue($ciniki);
 	if( $rc['stat'] != 'ok' ) {
-		error_log("CRON-ERR: ciniki.mail.checkQueue failed (" . serialize($rc['err']) . ")");
+		error_log("CRON-ERR: ciniki.campaigns.checkQueue failed (" . serialize($rc['err']) . ")");
+	}
+}
+
+//
+// Check for fatt mail that needs to be sent
+//
+if( file_exists($ciniki_root . '/ciniki-mods/fatt/cron/sendMessages.php') ) {
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'fatt', 'cron', 'sendMessages');
+	$rc = ciniki_fatt_cron_sendMessages($ciniki);
+	if( $rc['stat'] != 'ok' ) {
+		error_log("CRON-ERR: ciniki.fatt.sendMessages failed (" . serialize($rc['err']) . ")");
 	}
 }
 
