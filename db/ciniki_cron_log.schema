@@ -1,0 +1,51 @@
+#
+# Description
+# -----------
+# This table stores the log messages from cron jobs.
+#
+# Fields
+# -------
+# id:				The id of the log message.
+# uuid:				The Universal Unique ID.
+# business_id:		The business the log message is attached to.
+#
+# cron_id:			The ID of the cron job running, or 0 if generic.
+#
+# severity:			The severity of the log message
+#
+#					5 -  Debug info
+#					10 - Information only, deleted quickly
+#					20 - Confirmation
+#					30 - Warning
+#					40 - 
+#					50 - Fail
+#
+# log_date:			The UTC date and time the log.
+#
+# code:				The result code returned if there was an error, or 0 if no error.
+#
+# msg:				The message from the script.
+# pmsg:				The private admin message from the script. This is for sysadmins who understand technical details.
+#
+# errors:			The serialized err array for any functions called that returned an error.
+#
+# date_added:       The UTC date and time the record was added.
+# last_updated:     The UTC date and time the record was last updated.
+#
+create table ciniki_cron_log (
+	id bigint not null auto_increment,
+	uuid char(36) not null,
+	business_id int not null,
+	cron_id bigint not null,
+	severity tinyint unsigned not null,
+	log_date datetime not null,
+	code int not null,
+	msg varchar(5000) not null,
+	pmsg varchar(5000) not null,
+	errors varchar(10000) not null,
+	date_added datetime not null,
+	last_updated datetime not null,
+	primary key(id),
+	index (cron_id),
+	index sync (business_id, uuid, last_updated)
+) ENGINE='InnoDB', COMMENT='v1.01';
