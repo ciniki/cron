@@ -65,7 +65,10 @@ if( $rc['stat'] != 'ok' ) {
 
 if( isset($rc['modules']) ) {
 	$modules = $rc['modules'];
-	foreach($modules as $module) {
+	foreach($modules as $mod_name => $module) {
+		if( !isset($module['package']) || !isset($module['name']) ) {
+			continue;
+		}
 		$rc = ciniki_core_loadMethod($ciniki, $module['package'], $module['name'], 'cron', 'jobs');
 		if( $rc['stat'] == 'ok' ) {
 			$fn = $rc['function_call'];
