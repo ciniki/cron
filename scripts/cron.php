@@ -54,109 +54,47 @@ if( isset($rc['cronjobs']) ) {
 }
 
 //
-// Check for module list for all packages
+// Check if a specific module is to be run for this cron
 //
-ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'getModuleList');
-$rc = ciniki_core_getModuleList($ciniki);
-if( $rc['stat'] != 'ok' ) {
-	error_log('CRON-ERR: Unable to get module list');
-	exit(1);
+if( isset($argv[1]) && $argv[1] != '' ) {
+    list($package, $module) = explode('.', $argv[1]);
+    $modules = array(array('package'=>$package, 'name'=>$module));
+} else {
+    //
+    // Check for module list for all packages installed on this server
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'getModuleList');
+    $rc = ciniki_core_getModuleList($ciniki);
+    if( $rc['stat'] != 'ok' ) {
+        error_log('CRON-ERR: Unable to get module list');
+        exit(1);
+    }
+
+    if( isset($rc['modules']) ) {
+        $modules = $rc['modules'];
+    } else {
+        $modules = array();
+    }
 }
 
-if( isset($rc['modules']) ) {
-	$modules = $rc['modules'];
-	foreach($modules as $mod_name => $module) {
-		if( !isset($module['package']) || !isset($module['name']) ) {
-			continue;
-		}
-		$rc = ciniki_core_loadMethod($ciniki, $module['package'], $module['name'], 'cron', 'jobs');
-		if( $rc['stat'] == 'ok' ) {
-			$fn = $rc['function_call'];
-			$rc = $fn($ciniki);
-			if( $rc['stat'] != 'ok' ) {
-				ciniki_cron_logMsg($ciniki, 0, array('code'=>'2622', 'msg'=>'Unable to run jobs for : ' . $module['package'] . '.' . $module['name'],
-					'cron_id'=>0, 'severity'=>50, 'err'=>$rc['err']));
-			}
-		}
-	}
+//
+// Check the list of modules for a cron/jobs.php script
+//
+foreach($modules as $mod_name => $module) {
+    if( !isset($module['package']) || !isset($module['name']) ) {
+        continue;
+    }
+    $rc = ciniki_core_loadMethod($ciniki, $module['package'], $module['name'], 'cron', 'jobs');
+    if( $rc['stat'] == 'ok' ) {
+        $fn = $rc['function_call'];
+        $rc = $fn($ciniki);
+        if( $rc['stat'] != 'ok' ) {
+            ciniki_cron_logMsg($ciniki, 0, array('code'=>'2622', 'msg'=>'Unable to run jobs for : ' . $module['package'] . '.' . $module['name'],
+                'cron_id'=>0, 'severity'=>50, 'err'=>$rc['err']));
+        }
+    }
 }
 
-
-//
-// Check for campaign mail that is queued
-//
-/* Move to jobs.php
-if( file_exists($ciniki_root . '/ciniki-mods/campaigns/cron/checkQueue.php') ) {
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'campaigns', 'cron', 'checkQueue');
-	$rc = ciniki_campaigns_cron_checkQueue($ciniki);
-	if( $rc['stat'] != 'ok' ) {
-		error_log("CRON-ERR: ciniki.campaigns.checkQueue failed (" . serialize($rc['err']) . ")");
-	}
-} */
-
-//
-// Check for fatt mail that needs to be sent
-//
-/* moved to jobs.php
-if( file_exists($ciniki_root . '/ciniki-mods/fatt/cron/sendMessages.php') ) {
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'fatt', 'cron', 'sendMessages');
-	$rc = ciniki_fatt_cron_sendMessages($ciniki);
-	if( $rc['stat'] != 'ok' ) {
-		error_log("CRON-ERR: ciniki.fatt.sendMessages failed (" . serialize($rc['err']) . ")");
-	}
-} */
-
-//
-// Check for mail to be sent
-// 
-/* Moved to jobs.php
-if( file_exists($ciniki_root . '/ciniki-mods/mail/cron/checkMail.php') ) {
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'mail', 'cron', 'checkMail');
-	$rc = ciniki_mail_cron_checkMail($ciniki);
-	if( $rc['stat'] != 'ok' ) {
-		error_log("CRON-ERR: ciniki.mail.checkMail failed (" . serialize($rc['err']) . ")");
-	}
-} */
-
-//
-// Check for updateFeeds file to update ciniki.newsaggregator feeds
-//
-/*
-if( file_exists($ciniki_root . '/ciniki-mods/newsaggregator/cron/updateFeeds.php') ) {
-	print "CRON: Updating feeds\n";
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'newsaggregator', 'cron', 'updateFeeds');
-	$rc = ciniki_newsaggregator_cron_updateFeeds($ciniki);
-	if( $rc['stat'] != 'ok' ) {
-		error_log("CRON-ERR: ciniki.newsaggregator.updateFeeds failed (" . serialize($rc['err']) . ")");
-	}
-}
-*/
-
-//
-// Check for recurring invoices that need to be added
-//
-/* Moved to jobs
-if( file_exists($ciniki_root . '/ciniki-mods/sapos/cron/addRecurring.php') ) {
-	print "CRON: Adding recurring invoices\n";
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'sapos', 'cron', 'addRecurring');
-	$rc = ciniki_sapos_cron_addRecurring($ciniki);
-	if( $rc['stat'] != 'ok' ) {
-		error_log("CRON-ERR: ciniki.sapos.addRecurring failed (" . serialize($rc['err']) . ")");
-	}
-} */
-
-//
-// Check for directory updates from dropbox
-//
-/* Moved to jobs.php
-if( file_exists($ciniki_root . '/ciniki-mods/directory/cron/dropboxUpdate.php') ) {
-	print "CRON: Updating directories from Dropbox\n";
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'directory', 'cron', 'dropboxUpdate');
-	$rc = ciniki_directory_cron_dropboxUpdate($ciniki);
-	if( $rc['stat'] != 'ok' ) {
-		error_log("CRON-ERR: ciniki.directory.dropboxUpdate failed (" . serialize($rc['err']) . ")");
-	}
-} */
 
 exit(0);
 ?>
