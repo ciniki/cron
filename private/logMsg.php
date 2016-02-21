@@ -24,7 +24,7 @@ function ciniki_cron_logMsg($ciniki, $business_id, $args) {
 	// Setup error response. This allows the calling function to return the output of logMsg instead
 	// of building a second array to return error code.
 	//
-	$rsp = array('stat'=>'ok', 'err'=>array('pkg'=>'ciniki'));
+	$rsp = array('stat'=>'ok', 'err'=>array('pkg'=>(isset($args['package'])?$args['package']:'ciniki')));
 	$rsp['code'] = $args['code'];
 	$rsp['msg'] = $args['msg'];
 	if( isset($args['pmsg']) ) {
