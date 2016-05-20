@@ -56,9 +56,12 @@ if( isset($rc['cronjobs']) ) {
 //
 // Check if a specific module is to be run for this cron
 //
-if( isset($argv[1]) && $argv[1] != '' ) {
-    list($package, $module) = explode('.', $argv[1]);
-    $modules = array(array('package'=>$package, 'name'=>$module));
+if( isset($argv[1]) && $argv[1] != '' && $argv[1] != '-ignore' ) {
+    $modules = array();
+    for($i = 1; $i < count($argv); $i++ ) {
+        list($pkg, $mod) = explode('.', $argv[$i]);
+        $modules[] = array('package'=>$pkg, 'name'=>$mod);
+    }
 } else {
     //
     // Check for module list for all packages installed on this server
@@ -74,6 +77,17 @@ if( isset($argv[1]) && $argv[1] != '' ) {
         $modules = $rc['modules'];
     } else {
         $modules = array();
+    }
+
+    if( isset($argv[1]) && $argv[1] != '' && $argv[1] == '-ignore' && isset($argv[2]) && $argv[2] != '' ) {
+        for($i = 2; $i < count($argv); $i++ ) {
+            list($pkg, $mod) = explode('.', $argv[$i]);
+            foreach($modules as $mod_name => $module) {
+                if( $module['package'] == $pkg && $module['name'] == $mod ) {
+                    unset($modules[$mod_name]);
+                }
+            }
+        }
     }
 }
 
