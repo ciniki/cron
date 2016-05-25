@@ -49,5 +49,13 @@ function ciniki_cron_logMsg($ciniki, $business_id, $args) {
 		}
 	}
 
+    if( $args['severity'] >= 50 ) {
+        if( isset($args['err']) ) {
+            error_log("CRON-ERR[$business_id]: " . $args['code'] . ' - ' . $args['msg'] . '(' . print_r($args['err'], true) . ')');
+        } else {
+            error_log("CRON-ERR[$business_id]: " . $args['code'] . ' - ' . $args['msg']);
+        }
+    }
+
 	return $rsp;
 }
