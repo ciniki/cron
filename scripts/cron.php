@@ -14,23 +14,24 @@
 global $ciniki_root;
 $ciniki_root = dirname(__FILE__);
 if( !file_exists($ciniki_root . '/ciniki-api.ini') ) {
-	$ciniki_root = dirname(dirname(dirname(dirname(__FILE__))));
+    $ciniki_root = dirname(dirname(dirname(dirname(__FILE__))));
 }
 // loadMethod is required by all function to ensure the functions are dynamically loaded
 require_once($ciniki_root . '/ciniki-mods/core/private/loadMethod.php');
 require_once($ciniki_root . '/ciniki-mods/core/private/init.php');
+require_once($ciniki_root . '/ciniki-mods/core/private/checkModuleFlags.php');
 
 $rc = ciniki_core_init($ciniki_root, 'rest');
 if( $rc['stat'] != 'ok' ) {
-	error_log("unable to initialize core");
-	exit(1);
+    error_log("unable to initialize core");
+    exit(1);
 }
 
 //
 // Setup the $ciniki variable to hold all things ciniki.  
 //
 $ciniki = $rc['ciniki'];
-$ciniki['session']['user']['id'] = -3;	// Setup to Ciniki Robot
+$ciniki['session']['user']['id'] = -3;  // Setup to Ciniki Robot
 
 //
 // Get list of cron jobs **Not currently used**
@@ -40,17 +41,17 @@ ciniki_core_loadMethod($ciniki, 'ciniki', 'cron', 'private', 'execCronMethod');
 ciniki_core_loadMethod($ciniki, 'ciniki', 'cron', 'private', 'logMsg');
 $rc = ciniki_cron_getExecutionList($ciniki);
 if( $rc['stat'] != 'ok' ) {
-	error_log("unable to get cronjobs");
-	exit(1);
+    error_log("unable to get cronjobs");
+    exit(1);
 }
 
 if( isset($rc['cronjobs']) ) {
-	foreach($rc['cronjobs'] as $cid) {
-		$rc = ciniki_cron_execCronMethod($ciniki, $cid['cronjob']);
-		if( $rc['stat'] != 'ok' ) {
-			print "CRON-ERR: " . $cid['cronjob']['id'] . " failed - #" . $rc['err']['code'] . ": " . $rc['err']['msg'] . "\n";
-		}
-	}
+    foreach($rc['cronjobs'] as $cid) {
+        $rc = ciniki_cron_execCronMethod($ciniki, $cid['cronjob']);
+        if( $rc['stat'] != 'ok' ) {
+            print "CRON-ERR: " . $cid['cronjob']['id'] . " failed - #" . $rc['err']['code'] . ": " . $rc['err']['msg'] . "\n";
+        }
+    }
 }
 
 //

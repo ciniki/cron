@@ -8,49 +8,49 @@
 #
 # Fields
 # ------
-# id:					The id of the cronjob.
-# business_id:			The id of the business the cronjob is attached to.
-# status:				The status of the cron job
-#						0 - unknown
-#						1 - active
-#						2 - running
-#						65 - inactive
+# id:                   The id of the cronjob.
+# business_id:          The id of the business the cronjob is attached to.
+# status:               The status of the cron job
+#                       0 - unknown
+#                       1 - active
+#                       2 - running
+#                       65 - inactive
 #
-# m:					The minute to run the cronjob (0-59) future: (*, */5)
-# h:					The hour to run the cronjob (0-23) future: (*, */5)
-# dom:					The day of the month (*) future: (1-31)
-# mon:					The month (*) future: (1-12)
-# dow:					The day of the week to run the job (*) future: (0-7)
+# m:                    The minute to run the cronjob (0-59) future: (*, */5)
+# h:                    The hour to run the cronjob (0-23) future: (*, */5)
+# dom:                  The day of the month (*) future: (1-31)
+# mon:                  The month (*) future: (1-12)
+# dow:                  The day of the week to run the job (*) future: (0-7)
 #
-# method:				The cron method to be called.  This method must
-#						be located in the module/cron directory, similar
-#						to module/public directory, but these methods are only
-#						accessible from cron.  Add additional layer of security.
+# method:               The cron method to be called.  This method must
+#                       be located in the module/cron directory, similar
+#                       to module/public directory, but these methods are only
+#                       accessible from cron.  Add additional layer of security.
 #
-# serialized_args:		The argument list for the method, in urlencoded form
+# serialized_args:      The argument list for the method, in urlencoded form
 # 
-# date_added:			The UTC date and time the record was added.
-# last_updated:			The UTC date and time the record was last updated.
-# last_exec:			The UTC date and time the cron job was last executed.
-# last_status:			The status from the last execution.
-# next_exec:			The UTC date and time this cron job should next run.
+# date_added:           The UTC date and time the record was added.
+# last_updated:         The UTC date and time the record was last updated.
+# last_exec:            The UTC date and time the cron job was last executed.
+# last_status:          The status from the last execution.
+# next_exec:            The UTC date and time this cron job should next run.
 #
 create table ciniki_cron (
-	id int not null auto_increment,
-	business_id int not null,
-	status tinyint unsigned not null,
-	m varchar(5) not null,
-	h varchar(5) not null,
-	dom char(2) not null,
-	mon char(2) not null,
-	dow char(1) not null,
-	method varchar(150) not null,
-	serialized_args varchar(250) not null,
-	date_added datetime not null,
-	last_updated datetime not null,
-	last_exec datetime not null,
-	last_status varchar(10) not null,
-	next_exec datetime not null,
-	primary key (id),
-	index (business_id, status)
+    id int not null auto_increment,
+    business_id int not null,
+    status tinyint unsigned not null,
+    m varchar(5) not null,
+    h varchar(5) not null,
+    dom char(2) not null,
+    mon char(2) not null,
+    dow char(1) not null,
+    method varchar(150) not null,
+    serialized_args varchar(250) not null,
+    date_added datetime not null,
+    last_updated datetime not null,
+    last_exec datetime not null,
+    last_status varchar(10) not null,
+    next_exec datetime not null,
+    primary key (id),
+    index (business_id, status)
 ) ENGINE='InnoDB', COMMENT='v1.01';
