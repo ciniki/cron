@@ -35,7 +35,7 @@ function ciniki_cron_execCronMethod($ciniki, $cronjob) {
         return $rc;
     }
     if( !isset($rc['business']) || !isset($rc['business']['id']) || $rc['business']['id'] != $cronjob['business_id'] ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'444', 'msg'=>'Unable to validate business'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.cron.1', 'msg'=>'Unable to validate business'));
     }
 
     //
@@ -55,7 +55,7 @@ function ciniki_cron_execCronMethod($ciniki, $cronjob) {
         return $rc;
     }
     if( !isset($rc['business']) || !isset($rc['business']['id']) || $rc['business']['id'] != $cronjob['business_id'] ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'442', 'msg'=>'Unable to validate business'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.cron.2', 'msg'=>'Unable to validate business'));
     }
 
     //
@@ -87,7 +87,7 @@ function ciniki_cron_execCronMethod($ciniki, $cronjob) {
     }
     if( $rc['num_affected_rows'] != 1 ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.cron');
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'443', 'msg'=>'Unable to lock cron'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.cron.3', 'msg'=>'Unable to lock cron'));
     }
 
     //
@@ -103,7 +103,7 @@ function ciniki_cron_execCronMethod($ciniki, $cronjob) {
     //
     if( $method_filename == '' || $method_function == '' || !file_exists($method_filename) ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.cron');
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'445', 'msg'=>'Method does not exist'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.cron.4', 'msg'=>'Method does not exist'));
     }
 
     //
@@ -113,7 +113,7 @@ function ciniki_cron_execCronMethod($ciniki, $cronjob) {
 
     if( !is_callable($method_function) ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.cron');
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'446', 'msg'=>'Method does not exist'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.cron.5', 'msg'=>'Method does not exist'));
     }
 
     $method_ciniki = $ciniki;
@@ -147,7 +147,7 @@ function ciniki_cron_execCronMethod($ciniki, $cronjob) {
     }
     if( !isset($rc['next']) || !isset($rc['next']['utc']) || $rc['next']['utc'] == '' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.cron');
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'447', 'msg'=>'Unable to calculate next event'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.cron.6', 'msg'=>'Unable to calculate next event'));
     }
     $next_exec_utc = $rc['next']['utc'];
     
@@ -169,7 +169,7 @@ function ciniki_cron_execCronMethod($ciniki, $cronjob) {
     }
     if( $rc['num_affected_rows'] != 1 ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.cron');
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'448', 'msg'=>'Unable to lock cron'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.cron.7', 'msg'=>'Unable to lock cron'));
     }
 
     //
