@@ -104,7 +104,7 @@ foreach($modules as $mod_name => $module) {
         $fn = $rc['function_call'];
         $rc = $fn($ciniki);
         if( $rc['stat'] != 'ok' ) {
-            ciniki_cron_logMsg($ciniki, 0, array('code'=>'2622', 'msg'=>'Unable to run jobs for : ' . $module['package'] . '.' . $module['name'],
+            ciniki_cron_logMsg($ciniki, 0, array('code'=>'ciniki.cron.8', 'msg'=>'Unable to run jobs for : ' . $module['package'] . '.' . $module['name'],
                 'cron_id'=>0, 'severity'=>50, 'err'=>$rc['err']));
         }
     }
