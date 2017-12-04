@@ -14,7 +14,7 @@
 // Returns
 // -------
 // <cronjobs>
-//  <cronjob business_id="1" method="ciniki.wineproduction.emailXLSBackup" args="{serialized_data}"
+//  <cronjob tnid="1" method="ciniki.wineproduction.emailXLSBackup" args="{serialized_data}"
 // </cronjobs>
 //
 function ciniki_cron_getExecutionList($ciniki) {
@@ -25,7 +25,7 @@ function ciniki_cron_getExecutionList($ciniki) {
     // are run last.  That way if one cron crashes the system, it will filter
     // to the last and not interfere with new scheduled cron jobs
     //
-    $strsql = "SELECT id, business_id, h, m, dom, mon, dow, method, serialized_args "
+    $strsql = "SELECT id, tnid, h, m, dom, mon, dow, method, serialized_args "
         . "FROM ciniki_cron "
         . "WHERE status = 1 "
         . "AND next_exec < UTC_TIMESTAMP() "

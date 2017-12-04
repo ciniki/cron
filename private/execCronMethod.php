@@ -18,44 +18,44 @@ function ciniki_cron_execCronMethod($ciniki, $cronjob) {
     list($package, $module, $function) = preg_split('/\./', $cronjob['method']);
 
     //
-    // Check the business_id has the cron module enabled
+    // Check the tnid has the cron module enabled
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
-    $strsql = "SELECT ciniki_businesses.id FROM ciniki_businesses, ciniki_business_modules "
-        . "WHERE ciniki_businesses.id = '" . ciniki_core_dbQuote($ciniki, $cronjob['business_id']) . "' "
-        . "AND ciniki_businesses.status = 1 "
-        . "AND ciniki_businesses.id = ciniki_business_modules.business_id "
-        . "AND ciniki_business_modules.package = 'ciniki' "
-        . "AND ciniki_business_modules.module = 'cron' "
-        . "AND ciniki_business_modules.status = 1 "
+    $strsql = "SELECT ciniki_tenants.id FROM ciniki_tenants, ciniki_tenant_modules "
+        . "WHERE ciniki_tenants.id = '" . ciniki_core_dbQuote($ciniki, $cronjob['tnid']) . "' "
+        . "AND ciniki_tenants.status = 1 "
+        . "AND ciniki_tenants.id = ciniki_tenant_modules.tnid "
+        . "AND ciniki_tenant_modules.package = 'ciniki' "
+        . "AND ciniki_tenant_modules.module = 'cron' "
+        . "AND ciniki_tenant_modules.status = 1 "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
-    $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.businesses', 'business');
+    $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.tenants', 'tenant');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
-    if( !isset($rc['business']) || !isset($rc['business']['id']) || $rc['business']['id'] != $cronjob['business_id'] ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.cron.1', 'msg'=>'Unable to validate business'));
+    if( !isset($rc['tenant']) || !isset($rc['tenant']['id']) || $rc['tenant']['id'] != $cronjob['tnid'] ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.cron.1', 'msg'=>'Unable to validate tenant'));
     }
 
     //
     // Check the module requested is enabled
     //
-    $strsql = "SELECT ciniki_businesses.id FROM ciniki_businesses, ciniki_business_modules "
-        . "WHERE ciniki_businesses.id = '" . ciniki_core_dbQuote($ciniki, $cronjob['business_id']) . "' "
-        . "AND ciniki_businesses.status = 1 "
-        . "AND ciniki_businesses.id = ciniki_business_modules.business_id "
-        . "AND ciniki_business_modules.package = '" . ciniki_core_dbQuote($ciniki, $package) . "' "
-        . "AND ciniki_business_modules.module = '" . ciniki_core_dbQuote($ciniki, $module) . "' "
-        . "AND ciniki_business_modules.status = 1 "
+    $strsql = "SELECT ciniki_tenants.id FROM ciniki_tenants, ciniki_tenant_modules "
+        . "WHERE ciniki_tenants.id = '" . ciniki_core_dbQuote($ciniki, $cronjob['tnid']) . "' "
+        . "AND ciniki_tenants.status = 1 "
+        . "AND ciniki_tenants.id = ciniki_tenant_modules.tnid "
+        . "AND ciniki_tenant_modules.package = '" . ciniki_core_dbQuote($ciniki, $package) . "' "
+        . "AND ciniki_tenant_modules.module = '" . ciniki_core_dbQuote($ciniki, $module) . "' "
+        . "AND ciniki_tenant_modules.status = 1 "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
-    $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.businesses', 'business');
+    $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.tenants', 'tenant');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
-    if( !isset($rc['business']) || !isset($rc['business']['id']) || $rc['business']['id'] != $cronjob['business_id'] ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.cron.2', 'msg'=>'Unable to validate business'));
+    if( !isset($rc['tenant']) || !isset($rc['tenant']['id']) || $rc['tenant']['id'] != $cronjob['tnid'] ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.cron.2', 'msg'=>'Unable to validate tenant'));
     }
 
     //
